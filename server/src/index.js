@@ -18,6 +18,7 @@ app.get("/health", (req, res) => {
 // console.log("MONGO_URI from env:", process.env.MONGO_URI);
 await connectDB();
 
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
