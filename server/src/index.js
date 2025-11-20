@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 dotenv.config();
 
@@ -17,6 +18,14 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+
+// Simple protected route to test JWT auth
+app.get("/api/protected-test", authMiddleware, (req, res) => {
+  return res.json({
+    message: "You accessed a protected route!",
+    user: req.user,
+  });
+});
 
 // console.log("MONGO_URI from env:", process.env.MONGO_URI);
 await connectDB();
