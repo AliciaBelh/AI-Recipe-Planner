@@ -15,4 +15,15 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// POST /api/auth/login
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const result = await authService.login(email, password);
+    return res.json(result);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
 export default router;

@@ -35,13 +35,48 @@ export class AuthService {
 
   // Login an existing user (we will fill this soon)
   async login(email, password) {
-    // TODO: check user exists, compare password, return JWT
-    return { message: "login() not implemented yet" };
+    // 1. Basic validation
+    if (!email || !password) {
+      throw new Error("Email and password are required");
+    }
+
+    // 2. Find the user
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("Invalid email or password");
+    }
+
+    // 3. Compare password
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      throw new Error("Invalid email or password");
+    }
+
+    // 4. Generate JWT token
+    const token = this.generateToken(user);
+
+    // 5. Return user info + token
+    return {
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
+    };
   }
 
   // Generate a JWT token for a user
   generateToken(user) {
-    // TODO: implement JWT creation
-    return "token_not_implemented";
+    const payload = {
+      id: user._id,
+      email: user.email,
+    };
+
+    const secret = process.env.JWT_SECRET;
+
+    return jwt.sign(payload, secret, {
+      expiresIn: "7d", // token valid for 7 days
+    });
   }
 }
