@@ -1,28 +1,41 @@
 import { useState } from "react";
 import { loginUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   async function handleLogin(e) {
     e.preventDefault();
+    setMessage("");
 
     const response = await loginUser(email, password);
 
     if (response.message) {
-      setMessage(response.message); // error
+      // Backend sent an error (e.g. invalid credentials)
+      setMessage(response.message);
+    } else if (response.token && response.user) {
+      // Successful login: update global auth state
+      login(response.user, response.token);
+      // Optionally show a short success message (not required)
+      // setMessage("Login successful!");
+      // Redirect to home (you can change this later to /dashboard)
+      navigate("/");
     } else {
-      setMessage("Login successful! Token saved.");
+      // Fallback in case something weird happens
+      setMessage("Unexpected response from server.");
     }
   }
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 border rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-6 text-center">
-        Log In
-      </h2>
+      <h2 className="text-2xl font-semibold mb-6 text-center">Log In</h2>
 
       <form onSubmit={handleLogin} className="space-y-4">
         <input
@@ -49,9 +62,7 @@ function LoginPage() {
         </button>
       </form>
 
-      {message && (
-        <p className="mt-4 text-center text-red-600">{message}</p>
-      )}
+      {message && <p className="mt-4 text-center text-red-600">{message}</p>}
     </div>
   );
 }
