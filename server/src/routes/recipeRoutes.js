@@ -33,4 +33,25 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+// GET /api/recipes
+// Get all recipes for the logged-in user
+router.get("/", async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const recipes = await Recipe.find({ userId }).sort({ createdAt: -1 });
+
+    return res.json(recipes);
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    return res.status(500).json({ message: "Failed to fetch recipes" });
+  }
+});
+
+
 export default router;
