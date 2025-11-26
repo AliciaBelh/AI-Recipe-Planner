@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { registerUser } from "../services/authService";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
 
   async function handleRegister(e) {
@@ -25,6 +27,7 @@ function RegisterPage() {
       </h2>
 
       <form onSubmit={handleRegister} className="space-y-4">
+        {/* Email */}
         <input
           type="email"
           placeholder="Email"
@@ -33,13 +36,28 @@ function RegisterPage() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-2 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        {/* Password with toggle */}
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className="w-full p-2 border rounded pr-10"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1 text-gray-600"
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="h-4 w-4" />
+            ) : (
+              <EyeIcon className="h-4 w-4" />
+            )}
+          </button>
+        </div>
 
         <button
           type="submit"
@@ -49,9 +67,7 @@ function RegisterPage() {
         </button>
       </form>
 
-      {message && (
-        <p className="mt-4 text-center text-red-600">{message}</p>
-      )}
+      {message && <p className="mt-4 text-center text-red-600">{message}</p>}
     </div>
   );
 }
