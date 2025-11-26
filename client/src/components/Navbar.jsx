@@ -12,7 +12,7 @@ function Navbar() {
   //w-full fixed top-0 left-0 bg-white shadow-md py-4 px-6 z-50
 
   return (
-    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 w-full z-50">
       <Link to="/" className="text-2xl font-semibold text-gray-800">
         AI Recipe Planner
       </Link>
