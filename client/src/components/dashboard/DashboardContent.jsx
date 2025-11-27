@@ -1,4 +1,13 @@
-function DashboardContent({ user, status, error, recipes }) {
+import NewRecipePanel from "./NewRecipePanel";
+import RecipeDetailPanel from "./RecipeDetailPanel";
+
+function DashboardContent({ user, status, error, recipes, selectedRecipeId }) {
+  // Find the selected recipe, if any
+  const selectedRecipe =
+    selectedRecipeId && recipes.length > 0
+      ? recipes.find((r) => r._id === selectedRecipeId)
+      : null;
+
   return (
     <div className="flex-1 border rounded-lg shadow-md p-6 bg-gray">
       <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
@@ -9,8 +18,7 @@ function DashboardContent({ user, status, error, recipes }) {
           : "Welcome to your dashboard."}
       </p>
 
-      <h2 className="text-2xl font-semibold mb-4">My Recipes</h2>
-
+      {/* Loading / error states take precedence */}
       {status === "loading" && (
         <p className="text-gray-600">Loading your recipes...</p>
       )}
@@ -19,44 +27,27 @@ function DashboardContent({ user, status, error, recipes }) {
         <p className="text-red-600">Error: {error}</p>
       )}
 
-      {status === "success" && recipes.length === 0 && (
-        <p className="text-gray-600">
-          You don&apos;t have any saved recipes yet.
-        </p>
-      )}
+      {/* Only render content when loading is done and no error */}
+      {status === "success" && (
+        <>
+          {/* If no recipes and New Recipe selected, just show NewRecipePanel */}
+          {selectedRecipeId === null && (
+            <NewRecipePanel />
+          )}
 
-      {status === "success" && recipes.length > 0 && (
-        <div className="space-y-4">
-          {recipes.map((recipe) => (
-            <div
-              key={recipe._id}
-              className="border rounded-md p-4 shadow-sm bg-gray"
-            >
-              <h3 className="text-xl font-semibold mb-2">
-                {recipe.title}
-              </h3>
+          {/* If a recipe is selected, show its details */}
+          {selectedRecipeId !== null && (
+            <RecipeDetailPanel recipe={selectedRecipe} />
+          )}
 
-              <p className="text-sm text-gray-500 mb-2">
-                Created at:{" "}
-                {new Date(recipe.createdAt).toLocaleString()}
-              </p>
-
-              <div className="mb-2">
-                <h4 className="font-semibold">Ingredients:</h4>
-                <p className="whitespace-pre-line">
-                  {recipe.ingredientsText}
-                </p>
-              </div>
-
-              <div>
-                <h4 className="font-semibold">Instructions:</h4>
-                <p className="whitespace-pre-line">
-                  {recipe.instructions}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+          {/* Optional hint when there are no recipes at all */}
+          {recipes.length === 0 && selectedRecipeId === null && (
+            <p className="mt-6 text-gray-500">
+              You don&apos;t have any saved recipes yet. Once you create
+              recipes, they will appear in the sidebar on the left.
+            </p>
+          )}
+        </>
       )}
     </div>
   );

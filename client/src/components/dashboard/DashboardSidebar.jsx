@@ -16,13 +16,13 @@ function DashboardSidebar({
           className={`w-full text-left px-3 py-2 rounded transition ${
             selectedRecipeId === null
               ? "bg-blue-600 text-white"
-              : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+              : "bg-blue-50 text-white hover:bg-blue-100"
           }`}
         >
           New Recipe
         </button>
 
-        <div className="mt-2 text-sm text-gray-700">
+        <div className="mt-2 text-sm text-white">
           {recipes.length === 0 && (
             <p className="px-3 py-2 text-gray-500">No recipes yet.</p>
           )}
