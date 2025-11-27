@@ -9,6 +9,7 @@ function DashboardPage() {
   const [recipes, setRecipes] = useState([]);
   const [status, setStatus] = useState("idle"); // "idle" | "loading" | "error" | "success"
   const [error, setError] = useState("");
+  const [selectedRecipeId, setSelectedRecipeId] = useState(null); // null = "New Recipe"
 
   useEffect(() => {
     async function fetchRecipes() {
@@ -32,12 +33,19 @@ function DashboardPage() {
   return (
     <div className="max-w-5xl mx-auto mt-20 px-4">
       <div className="flex gap-6">
-        <DashboardSidebar recipes={recipes} />
+        <DashboardSidebar
+          recipes={recipes}
+          selectedRecipeId={selectedRecipeId}
+          onSelectNew={() => setSelectedRecipeId(null)}
+          onSelectRecipe={(id) => setSelectedRecipeId(id)}
+        />
         <DashboardContent
           user={user}
           status={status}
           error={error}
           recipes={recipes}
+          // selectedRecipeId will be used in next steps
+          selectedRecipeId={selectedRecipeId}
         />
       </div>
     </div>
