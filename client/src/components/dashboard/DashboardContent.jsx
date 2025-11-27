@@ -1,6 +1,6 @@
 function DashboardContent({ user, status, error, recipes }) {
   return (
-    <div className="flex-1 border rounded-lg shadow-md p-6 bg-white">
+    <div className="flex-1 border rounded-lg shadow-md p-6 bg-gray">
       <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
 
       <p className="text-lg mb-6">
@@ -30,7 +30,7 @@ function DashboardContent({ user, status, error, recipes }) {
           {recipes.map((recipe) => (
             <div
               key={recipe._id}
-              className="border rounded-md p-4 shadow-sm bg-white"
+              className="border rounded-md p-4 shadow-sm bg-gray"
             >
               <h3 className="text-xl font-semibold mb-2">
                 {recipe.title}
