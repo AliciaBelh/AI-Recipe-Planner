@@ -32,7 +32,7 @@ function DashboardPage() {
   return (
     <div className="max-w-5xl mx-auto mt-20 px-4">
       <div className="flex gap-6">
-        <DashboardSidebar />
+        <DashboardSidebar recipes={recipes} />
         <DashboardContent
           user={user}
           status={status}
