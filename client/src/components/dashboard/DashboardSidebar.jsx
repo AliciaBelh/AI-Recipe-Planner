@@ -5,7 +5,7 @@ function DashboardSidebar({
   onSelectRecipe,
 }) {
   return (
-    <div className="fixed top-18 left-0 w-64 h-[calc(100vh-4rem)] border-r border-black bg-black px-4 py-4 overflow-y-auto">
+    <div className="fixed top-18 left-0 w-80 h-[calc(100vh-4rem)] border-r border-black bg-black px-4 py-4 overflow-y-auto">
       {/* <h2 className="text-lg font-semibold mb-4">Recipes</h2> */}
 
       <div className="space-y-2 pt-4">
