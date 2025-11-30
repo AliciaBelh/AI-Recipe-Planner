@@ -10,13 +10,7 @@ function DashboardContent({ user, status, error, recipes, selectedRecipeId }) {
 
   return (
     <div className="flex-1 border rounded-lg shadow-md p-6 bg-gray">
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-
-      <p className="text-lg mb-6">
-        {user?.email
-          ? `Welcome, ${user.email}!`
-          : "Welcome to your dashboard."}
-      </p>
+      {/* <h1 className="text-3xl font-bold mb-4">Dashboard</h1> */}
 
       {/* Loading / error states take precedence */}
       {status === "loading" && (

@@ -31,24 +31,26 @@ function DashboardPage() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto mt-20 px-4">
-      <div className="flex gap-6">
-        <DashboardSidebar
-          recipes={recipes}
-          selectedRecipeId={selectedRecipeId}
-          onSelectNew={() => setSelectedRecipeId(null)}
-          onSelectRecipe={(id) => setSelectedRecipeId(id)}
-        />
+    <>
+      {/* Fixed sidebar on the left */}
+      <DashboardSidebar
+        recipes={recipes}
+        selectedRecipeId={selectedRecipeId}
+        onSelectNew={() => setSelectedRecipeId(null)}
+        onSelectRecipe={(id) => setSelectedRecipeId(id)}
+      />
+
+      {/* Main content shifted to the right of the sidebar */}
+      <div className="ml-72 mr-4">
         <DashboardContent
           user={user}
           status={status}
           error={error}
           recipes={recipes}
-          // selectedRecipeId will be used in next steps
           selectedRecipeId={selectedRecipeId}
         />
       </div>
-    </div>
+    </>
   );
 }
 
