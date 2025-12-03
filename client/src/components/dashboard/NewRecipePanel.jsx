@@ -1,12 +1,50 @@
 import { useState } from "react";
-import { createRecipe } from "../../services/recipeService";
+import {
+  createRecipe,
+  generateRecipeWithAI,
+} from "../../services/recipeService";
 
 function NewRecipePanel({ onRecipeCreated }) {
   const [title, setTitle] = useState("");
   const [ingredientsText, setIngredientsText] = useState("");
   const [instructions, setInstructions] = useState("");
+  // Saving state
   const [status, setStatus] = useState("idle"); // "idle" | "saving" | "success" | "error"
   const [error, setError] = useState("");
+  // AI generation state
+  const [preferences, setPreferences] = useState("");
+  const [aiStatus, setAiStatus] = useState("idle"); // "idle" | "generating" | "error"
+  const [aiError, setAiError] = useState("");
+
+
+  async function handleGenerate() {
+    if (!ingredientsText.trim()) {
+      setAiError("Please enter some ingredients before generating.");
+      return;
+    }
+
+    try {
+      setAiStatus("generating");
+      setAiError("");
+
+      const aiRecipe = await generateRecipeWithAI(
+        ingredientsText.trim(),
+        preferences.trim()
+      );
+
+      // Fill form fields with AI response (but allow user to edit)
+      setTitle(aiRecipe.title || "");
+      setIngredientsText(aiRecipe.ingredientsText || ingredientsText);
+      setInstructions(aiRecipe.instructions || "");
+
+      setAiStatus("idle");
+    } catch (err) {
+      console.error("Error generating recipe with AI:", err);
+      setAiStatus("error");
+      setAiError(err.message || "Failed to generate recipe.");
+    }
+  }
+
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,6 +75,7 @@ function NewRecipePanel({ onRecipeCreated }) {
       setTitle("");
       setIngredientsText("");
       setInstructions("");
+      setPreferences("");
     } catch (err) {
       console.error("Error creating recipe:", err);
       setStatus("error");
@@ -48,11 +87,54 @@ function NewRecipePanel({ onRecipeCreated }) {
     <div>
       <h2 className="text-2xl font-semibold mb-4">New Recipe</h2>
       <p className="text-white mb-4">
-        Enter your ingredients and recipe details. Later, this flow can be
-        powered by AI to help you generate meal ideas automatically.
+        Enter your ingredients and optionally some preferences. Use AI to
+        generate a recipe, then review and save it.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Ingredients (used for AI + saved in recipe) */}
+        <div>
+          <label className="block text-sm font-semibold mb-1">
+            Ingredients
+          </label>
+          <textarea
+            className="w-full border rounded px-3 py-2 h-28"
+            placeholder="List your ingredients here (e.g. pasta, tomatoes, garlic)..."
+            value={ingredientsText}
+            onChange={(e) => setIngredientsText(e.target.value)}
+          />
+        </div>
+
+        {/* Preferences + Generate button */}
+        <div>
+          <label className="block text-sm font-semibold mb-1">
+            Extra preferences (optional)
+          </label>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2 mb-2"
+            placeholder="E.g. vegetarian, quick dinner, one-pot..."
+            value={preferences}
+            onChange={(e) => setPreferences(e.target.value)}
+          />
+
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={aiStatus === "generating"}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition"
+          >
+            {aiStatus === "generating"
+              ? "Generating with AI..."
+              : "Generate with AI"}
+          </button>
+
+          {aiError && (
+            <p className="text-red-600 text-sm mt-1">{aiError}</p>
+          )}
+        </div>
+
+        {/* Title (AI-filled or manual) */}
         <div>
           <label className="block text-sm font-semibold mb-1">
             Title
@@ -66,18 +148,7 @@ function NewRecipePanel({ onRecipeCreated }) {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-semibold mb-1">
-            Ingredients
-          </label>
-          <textarea
-            className="w-full border rounded px-3 py-2 h-28"
-            placeholder="List your ingredients here..."
-            value={ingredientsText}
-            onChange={(e) => setIngredientsText(e.target.value)}
-          />
-        </div>
-
+        {/* Instructions (AI-filled or manual) */}
         <div>
           <label className="block text-sm font-semibold mb-1">
             Instructions
