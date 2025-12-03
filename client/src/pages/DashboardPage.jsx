@@ -48,7 +48,7 @@ function DashboardPage() {
       />
 
       {/* Main content shifted to the right of the sidebar */}
-      <div className="ml-96 mr-4">
+      <div className="ml-96 mr-4 mt-6 lg:mt-8">
         <DashboardContent
           user={user}
           status={status}
