@@ -40,3 +40,19 @@ export async function getMyRecipes() {
 
   return data;
 }
+
+export async function generateRecipeWithAI(ingredientsText, preferences = "") {
+  const response = await fetch(`${API_URL}/generate`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ ingredientsText, preferences }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to generate recipe");
+  }
+
+  return data; // { title, ingredientsText, instructions }
+}
