@@ -10,9 +10,9 @@ function Navbar() {
     navigate("/login");
   }
   //w-full fixed top-0 left-0 bg-white shadow-md py-4 px-6 z-50
- 
+
   return (
-    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 w-full z-50">
       <Link to="/" className="text-2xl font-semibold text-gray-800">
         AI Recipe Planner
       </Link>
@@ -40,6 +40,14 @@ function Navbar() {
             <span className="text-gray-700">
               {user?.email ? `Hello, ${user.email}` : "Logged in"}
             </span>
+
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+            >
+              Dashboard
+            </button>
+
             <button
               onClick={handleLogout}
               className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"

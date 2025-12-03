@@ -28,7 +28,7 @@ function LoginPage() {
       // Optionally show a short success message (not required)
       // setMessage("Login successful!");
       // Redirect to home (you can change this later to /dashboard)
-      navigate("/");
+      navigate("/dashboard");
     } else {
       // Fallback in case something weird happens
       setMessage("Unexpected response from server.");
