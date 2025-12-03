@@ -1,3 +1,4 @@
+import "dotenv/config";
 import OpenAI from "openai";
 
 // We will use this client in the next step to call the real API.
