@@ -1,7 +1,7 @@
 import NewRecipePanel from "./NewRecipePanel";
 import RecipeDetailPanel from "./RecipeDetailPanel";
 
-function DashboardContent({ user, status, error, recipes, selectedRecipeId }) {
+function DashboardContent({ user, status, error, recipes, selectedRecipeId, onRecipeCreated }) {
   // Find the selected recipe, if any
   const selectedRecipe =
     selectedRecipeId && recipes.length > 0
@@ -26,7 +26,7 @@ function DashboardContent({ user, status, error, recipes, selectedRecipeId }) {
         <>
           {/* If no recipes and New Recipe selected, just show NewRecipePanel */}
           {selectedRecipeId === null && (
-            <NewRecipePanel />
+            <NewRecipePanel onRecipeCreated={onRecipeCreated} />
           )}
 
           {/* If a recipe is selected, show its details */}

@@ -30,6 +30,13 @@ function DashboardPage() {
     fetchRecipes();
   }, []);
 
+  function handleRecipeCreated(newRecipe) {
+    // Add the new recipe to the list (at the top)
+    setRecipes((prev) => [newRecipe, ...prev]);
+    // Select the new recipe so it opens on the right and gets highlighted
+    setSelectedRecipeId(newRecipe._id);
+  }
+
   return (
     <>
       {/* Fixed sidebar on the left */}
@@ -48,6 +55,7 @@ function DashboardPage() {
           error={error}
           recipes={recipes}
           selectedRecipeId={selectedRecipeId}
+          onRecipeCreated={handleRecipeCreated}
         />
       </div>
     </>
