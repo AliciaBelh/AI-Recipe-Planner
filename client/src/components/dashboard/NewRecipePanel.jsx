@@ -18,6 +18,7 @@ function NewRecipePanel({ onRecipeCreated }) {
   const [preferences, setPreferences] = useState("");
   const [aiStatus, setAiStatus] = useState("idle"); // "idle" | "generating" | "error"
   const [aiError, setAiError] = useState("");
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   async function handleGenerate() {
     if (!rawIngredients.trim()) {
@@ -38,7 +39,7 @@ function NewRecipePanel({ onRecipeCreated }) {
       setTitle(aiRecipe.title || "");
       setIngredientsText(aiRecipe.ingredientsText || "");
       setInstructions(aiRecipe.instructions || "");
-
+      setHasGenerated(true);
       setAiStatus("idle");
     } catch (err) {
       console.error("Error generating recipe with AI:", err);
@@ -78,6 +79,7 @@ function NewRecipePanel({ onRecipeCreated }) {
       setTitle("");
       setIngredientsText("");
       setInstructions("");
+      setHasGenerated(false);
     } catch (err) {
       console.error("Error creating recipe:", err);
       setStatus("error");
@@ -97,7 +99,7 @@ function NewRecipePanel({ onRecipeCreated }) {
         {/* User ingredients (prompt to AI) */}
         <div>
           <label className="block text-sm font-semibold mb-1">
-            Your Ingredients 
+            Your Ingredients
           </label>
           <textarea
             className="w-full border rounded px-3 py-2 h-28"
@@ -131,68 +133,66 @@ function NewRecipePanel({ onRecipeCreated }) {
               : "Generate with AI"}
           </button>
 
-          {aiError && (
-            <p className="text-red-600 text-sm mt-1">{aiError}</p>
-          )}
+          {aiError && <p className="text-red-600 text-sm mt-1">{aiError}</p>}
         </div>
 
-        {/* Title (AI-filled or manual) */}
-        <div>
-          <label className="block text-sm font-semibold mb-1">
-            Title 
-          </label>
-          <input
-            type="text"
-            className="w-full border rounded px-3 py-2"
-            placeholder="E.g. Creamy Tomato Pasta"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
+        {hasGenerated && (
+          <>
+            {/* Title (AI-filled or manual) */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">Title</label>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="E.g. Creamy Tomato Pasta"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
 
-        {/* AI Ingredients box (between title and instructions) */}
-        <div>
-          <label className="block text-sm font-semibold mb-1">
-            Ingredients
-          </label>
-          <textarea
-            className="w-full border rounded px-3 py-2 h-28"
-            placeholder="AI-generated ingredients will appear here..."
-            value={ingredientsText}
-            onChange={(e) => setIngredientsText(e.target.value)}
-          />
-        </div>
+            {/* AI Ingredients box (between title and instructions) */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Ingredients
+              </label>
+              <textarea
+                className="w-full border rounded px-3 py-2 h-28"
+                placeholder="AI-generated ingredients will appear here..."
+                value={ingredientsText}
+                onChange={(e) => setIngredientsText(e.target.value)}
+              />
+            </div>
 
-        {/* Instructions (AI-filled or manual) */}
-        <div>
-          <label className="block text-sm font-semibold mb-1">
-            Instructions
-          </label>
-          <textarea
-            className="w-full border rounded px-3 py-2 h-40"
-            placeholder="Describe how to prepare the meal..."
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-          />
-        </div>
+            {/* Instructions (AI-filled or manual) */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Instructions
+              </label>
+              <textarea
+                className="w-full border rounded px-3 py-2 h-40"
+                placeholder="Describe how to prepare the meal..."
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+              />
+            </div>
 
-        {error && (
-          <p className="text-red-600 text-sm">{error}</p>
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+
+            {status === "success" && (
+              <p className="text-green-600 text-sm">
+                Recipe saved successfully!
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={status === "saving"}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed transition"
+            >
+              {status === "saving" ? "Saving..." : "Save Recipe"}
+            </button>
+          </>
         )}
-
-        {status === "success" && (
-          <p className="text-green-600 text-sm">
-            Recipe saved successfully!
-          </p>
-        )}
-
-        <button
-          type="submit"
-          disabled={status === "saving"}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed transition"
-        >
-          {status === "saving" ? "Saving..." : "Save Recipe"}
-        </button>
       </form>
     </div>
   );
