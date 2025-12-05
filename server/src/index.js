@@ -5,6 +5,7 @@ import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import { authMiddleware } from "./middleware/authMiddleware.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get("/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", authMiddleware, recipeRoutes);
+app.use("/api/recipes", authMiddleware, aiRoutes);
 
 // Simple protected route to test JWT auth
 app.get("/api/protected-test", authMiddleware, (req, res) => {

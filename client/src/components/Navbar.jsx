@@ -12,8 +12,8 @@ function Navbar() {
   //w-full fixed top-0 left-0 bg-white shadow-md py-4 px-6 z-50
 
   return (
-    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 w-full z-50">
-      <Link to="/" className="text-2xl font-semibold text-gray-800">
+    <nav className="bg-gray-400 shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 w-full z-50">
+      <Link to="/" className="text-3xl font-semibold text-gray-800 hover:text-blue-600 transition">
         AI Recipe Planner
       </Link>
 
@@ -22,13 +22,13 @@ function Navbar() {
           <>
             <Link
               to="/login"
-              className="text-gray-700 hover:text-blue-600 transition"
+              className="text-xl text-gray-800 font-semibold hover:text-blue-600 transition"
             >
               Login
             </Link>
             <Link
               to="/register"
-              className="text-gray-700 hover:text-blue-600 transition"
+              className="text-xl text-gray-800 font-semibold hover:text-blue-600 transition"
             >
               Register
             </Link>
@@ -37,7 +37,7 @@ function Navbar() {
 
         {isAuthenticated && (
           <>
-            <span className="text-gray-700">
+            <span className="text-black">
               {user?.email ? `Hello, ${user.email}` : "Logged in"}
             </span>
 
