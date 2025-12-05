@@ -5,6 +5,9 @@ import {
 } from "../../services/recipeService";
 
 function NewRecipePanel({ onRecipeCreated }) {
+  // User input ingredients (used as prompt for AI)
+  const [rawIngredients, setRawIngredients] = useState("");
+  // AI-generated fields (these will be saved)
   const [title, setTitle] = useState("");
   const [ingredientsText, setIngredientsText] = useState("");
   const [instructions, setInstructions] = useState("");
@@ -16,9 +19,8 @@ function NewRecipePanel({ onRecipeCreated }) {
   const [aiStatus, setAiStatus] = useState("idle"); // "idle" | "generating" | "error"
   const [aiError, setAiError] = useState("");
 
-
   async function handleGenerate() {
-    if (!ingredientsText.trim()) {
+    if (!rawIngredients.trim()) {
       setAiError("Please enter some ingredients before generating.");
       return;
     }
@@ -28,13 +30,13 @@ function NewRecipePanel({ onRecipeCreated }) {
       setAiError("");
 
       const aiRecipe = await generateRecipeWithAI(
-        ingredientsText.trim(),
+        rawIngredients.trim(),
         preferences.trim()
       );
 
       // Fill form fields with AI response (but allow user to edit)
       setTitle(aiRecipe.title || "");
-      setIngredientsText(aiRecipe.ingredientsText || ingredientsText);
+      setIngredientsText(aiRecipe.ingredientsText || "");
       setInstructions(aiRecipe.instructions || "");
 
       setAiStatus("idle");
@@ -44,7 +46,6 @@ function NewRecipePanel({ onRecipeCreated }) {
       setAiError(err.message || "Failed to generate recipe.");
     }
   }
-
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -71,11 +72,12 @@ function NewRecipePanel({ onRecipeCreated }) {
         onRecipeCreated(newRecipe);
       }
 
-      // Optional: clear the form after saving
+      // clear the form after saving
+      setRawIngredients("");
+      setPreferences("");
       setTitle("");
       setIngredientsText("");
       setInstructions("");
-      setPreferences("");
     } catch (err) {
       console.error("Error creating recipe:", err);
       setStatus("error");
@@ -86,22 +88,22 @@ function NewRecipePanel({ onRecipeCreated }) {
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">New Recipe</h2>
-      <p className="text-white mb-4">
+      <p className="mb-4">
         Enter your ingredients and optionally some preferences. Use AI to
         generate a recipe, then review and save it.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Ingredients (used for AI + saved in recipe) */}
+        {/* User ingredients (prompt to AI) */}
         <div>
           <label className="block text-sm font-semibold mb-1">
-            Ingredients
+            Your Ingredients 
           </label>
           <textarea
             className="w-full border rounded px-3 py-2 h-28"
             placeholder="List your ingredients here (e.g. pasta, tomatoes, garlic)..."
-            value={ingredientsText}
-            onChange={(e) => setIngredientsText(e.target.value)}
+            value={rawIngredients}
+            onChange={(e) => setRawIngredients(e.target.value)}
           />
         </div>
 
@@ -137,7 +139,7 @@ function NewRecipePanel({ onRecipeCreated }) {
         {/* Title (AI-filled or manual) */}
         <div>
           <label className="block text-sm font-semibold mb-1">
-            Title
+            Title 
           </label>
           <input
             type="text"
@@ -145,6 +147,19 @@ function NewRecipePanel({ onRecipeCreated }) {
             placeholder="E.g. Creamy Tomato Pasta"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+
+        {/* AI Ingredients box (between title and instructions) */}
+        <div>
+          <label className="block text-sm font-semibold mb-1">
+            Ingredients
+          </label>
+          <textarea
+            className="w-full border rounded px-3 py-2 h-28"
+            placeholder="AI-generated ingredients will appear here..."
+            value={ingredientsText}
+            onChange={(e) => setIngredientsText(e.target.value)}
           />
         </div>
 
