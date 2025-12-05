@@ -1,35 +1,60 @@
 import "dotenv/config";
 import OpenAI from "openai";
 
-// We will use this client in the next step to call the real API.
-// For now we just set it up.
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI();
 
 /**
- * For now this is a MOCK implementation.
- * Later we will replace the mock with a real OpenAI call.
+ * Generates a real recipe using OpenAI.
+ * Uses JSON mode to guarantee structured output.
  */
-export async function generateRecipeFromIngredients(
-  ingredientsText,
-  preferences = ""
-) {
-  console.log("generateRecipeFromIngredients called with:");
-  console.log("ingredientsText:", ingredientsText);
-  console.log("preferences:", preferences);
+export async function generateRecipeFromIngredients(ingredientsText, preferences = "") {
+  try {
+    console.log("Calling OpenAI with ingredients:", ingredientsText);
 
-  // TEMP: return a fake recipe so we can test the flow
-  return {
-    title:
-      "Mock Pasta with " + (ingredientsText?.slice(0, 20) || "Ingredients"),
-    ingredientsText:
-      ingredientsText ||
-      "No specific ingredients provided. (This is mock data.)",
-    instructions:
-      "1. Prepare your ingredients.\n" +
-      "2. Cook everything together in a pan.\n" +
-      "3. Season to taste and serve.\n\n" +
-      "(These instructions are mock data. Real AI generation coming soon.)",
-  };
+    const systemMessage = `
+      You are a helpful cooking assistant that creates recipes based on ingredients.
+      Respond ONLY in valid JSON with the following fields:
+      {
+        "title": "short recipe title",
+        "ingredientsText": "formatted list of ingredients",
+        "instructions": "clear numbered steps"
+      }
+      Do not include Markdown, explanations, or text outside the JSON.
+    `;
+
+    const userMessage = `
+      Ingredients: ${ingredientsText}
+      Preferences: ${preferences}
+    `;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4.1-mini",
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: systemMessage },
+        { role: "user", content: userMessage },
+      ],
+      temperature: 0.7,
+    });
+
+    const content = completion.choices[0].message.content;
+
+    // Parse JSON returned by OpenAI
+    const recipe = JSON.parse(content);
+
+    console.log("AI recipe generated successfully:", recipe);
+
+    return {
+      title: recipe.title,
+      ingredientsText: recipe.ingredientsText,
+      instructions: recipe.instructions,
+    };
+
+  } catch (err) {
+    console.error("OpenAI generation error:", err);
+
+    throw new Error(
+      "AI recipe generation failed. Please try again or adjust the ingredients."
+    );
+  }
 }
