@@ -33,7 +33,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 // GET /api/recipes
 // Get all recipes for the logged-in user
 router.get("/", async (req, res) => {
@@ -53,5 +52,33 @@ router.get("/", async (req, res) => {
   }
 });
 
+// DELETE /api/recipes/:id
+// Deletes a recipe that belongs to the authenticated user
+router.delete("/:id", async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    // Find recipe that belongs to this user
+    const recipe = await Recipe.findOne({ _id: id, userId });
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    await recipe.deleteOne();
+
+    return res.json({ message: "Recipe deleted" });
+  } catch (error) {
+    console.error("Error deleting recipe:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to delete recipe. Please try again." });
+  }
+});
 
 export default router;
