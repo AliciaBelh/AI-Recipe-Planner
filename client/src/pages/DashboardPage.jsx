@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getMyRecipes } from "../services/recipeService";
+import { getMyRecipes, deleteRecipe } from "../services/recipeService";
 import DashboardSidebar from "../components/dashboard/DashboardSidebar";
 import DashboardContent from "../components/dashboard/DashboardContent";
 
@@ -37,6 +37,28 @@ function DashboardPage() {
     setSelectedRecipeId(newRecipe._id);
   }
 
+  async function handleDeleteRecipe(id) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this recipe? This cannot be undone."
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteRecipe(id);
+
+      // Remove recipe from local state
+      setRecipes((prev) => prev.filter((r) => r._id !== id));
+
+      // If the deleted recipe was selected, go back to "New Recipe"
+      if (selectedRecipeId === id) {
+        setSelectedRecipeId(null);
+      }
+    } catch (err) {
+      console.error("Error deleting recipe:", err);
+      alert(err.message || "Failed to delete recipe.");
+    }
+  }
+
   return (
     <>
       {/* Fixed sidebar on the left */}
@@ -45,6 +67,7 @@ function DashboardPage() {
         selectedRecipeId={selectedRecipeId}
         onSelectNew={() => setSelectedRecipeId(null)}
         onSelectRecipe={(id) => setSelectedRecipeId(id)}
+        onDeleteRecipe={handleDeleteRecipe}
       />
 
       {/* Main content shifted to the right of the sidebar */}

@@ -56,3 +56,24 @@ export async function generateRecipeWithAI(ingredientsText, preferences = "") {
 
   return data; // { title, ingredientsText, instructions }
 }
+
+export async function deleteRecipe(id) {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+  // Try to parse JSON if present
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (e) {
+    // no body or invalid JSON, ignore
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete recipe");
+  }
+
+  return data; // e.g. { message: "Recipe deleted" }
+}
