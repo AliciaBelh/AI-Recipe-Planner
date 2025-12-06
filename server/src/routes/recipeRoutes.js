@@ -81,4 +81,41 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// PUT /api/recipes/:id
+// Updates the title of a recipe that belongs to the authenticated user
+router.put("/:id", async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    const { title } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    if (!title || !title.trim()) {
+      return res.status(400).json({ message: "Title is required" });
+    }
+
+    const recipe = await Recipe.findOne({ _id: id, userId });
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    recipe.title = title.trim();
+    await recipe.save();
+
+    return res.json({
+      message: "Recipe updated",
+      recipe,
+    });
+  } catch (error) {
+    console.error("Error updating recipe:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to update recipe. Please try again." });
+  }
+});
+
 export default router;
