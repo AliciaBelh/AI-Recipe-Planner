@@ -117,7 +117,7 @@ function DashboardSidebar({
                           </button>
                           <button
                             type="button"
-                            className="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                            className="block w-full text-left mt-0.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
                             onClick={(e) => handleDeleteClick(e, recipe._id)}
                           >
                             Delete
