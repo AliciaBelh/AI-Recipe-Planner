@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getMyRecipes, deleteRecipe } from "../services/recipeService";
+import {
+  getMyRecipes,
+  deleteRecipe,
+  updateRecipeTitle,
+} from "../services/recipeService";
 import DashboardSidebar from "../components/dashboard/DashboardSidebar";
 import DashboardContent from "../components/dashboard/DashboardContent";
 
@@ -59,6 +63,40 @@ function DashboardPage() {
     }
   }
 
+  async function handleRenameRecipe(id) {
+    const recipe = recipes.find((r) => r._id === id);
+    const currentTitle = recipe?.title || "";
+
+    const newTitle = window.prompt(
+      "Enter a new title for this recipe:",
+      currentTitle
+    );
+
+    if (newTitle === null) {
+      // User clicked "Cancel"
+      return;
+    }
+
+    const trimmedTitle = newTitle.trim();
+    if (!trimmedTitle || trimmedTitle === currentTitle) {
+      // Empty or unchanged
+      return;
+    }
+
+    try {
+      const updated = await updateRecipeTitle(id, trimmedTitle);
+
+      const updatedTitle = updated?.title || trimmedTitle;
+
+      setRecipes((prev) =>
+        prev.map((r) => (r._id === id ? { ...r, title: updatedTitle } : r))
+      );
+    } catch (err) {
+      console.error("Error renaming recipe:", err);
+      alert(err.message || "Failed to rename recipe.");
+    }
+  }
+
   return (
     <>
       {/* Fixed sidebar on the left */}
@@ -68,6 +106,7 @@ function DashboardPage() {
         onSelectNew={() => setSelectedRecipeId(null)}
         onSelectRecipe={(id) => setSelectedRecipeId(id)}
         onDeleteRecipe={handleDeleteRecipe}
+        onRenameRecipe={handleRenameRecipe}
       />
 
       {/* Main content shifted to the right of the sidebar */}

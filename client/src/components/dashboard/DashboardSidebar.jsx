@@ -6,6 +6,7 @@ function DashboardSidebar({
   onSelectNew,
   onSelectRecipe,
   onDeleteRecipe,
+  onRenameRecipe,
 }) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
@@ -22,6 +23,15 @@ function DashboardSidebar({
     setOpenMenuId(null);
     if (onDeleteRecipe) {
       onDeleteRecipe(recipeId);
+    }
+  }
+
+  function handleRenameClick(e, recipeId) {
+    e.stopPropagation();
+    e.preventDefault();
+    setOpenMenuId(null);
+    if (onRenameRecipe) {
+      onRenameRecipe(recipeId);
     }
   }
 
@@ -107,14 +117,11 @@ function DashboardSidebar({
                           <button
                             type="button"
                             className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Placeholder for future rename logic
-                              // console.log("Rename clicked", recipe._id);
-                            }}
+                            onClick={(e) => handleRenameClick(e, recipe._id)}
                           >
                             Rename
                           </button>
+
                           <button
                             type="button"
                             className="block w-full text-left mt-0.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
