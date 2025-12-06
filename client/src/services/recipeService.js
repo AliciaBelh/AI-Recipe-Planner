@@ -57,6 +57,28 @@ export async function generateRecipeWithAI(ingredientsText, preferences = "") {
   return data; // { title, ingredientsText, instructions }
 }
 
+export async function updateRecipeTitle(id, newTitle) {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ title: newTitle }),
+  });
+
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (e) {
+    // ignore parse errors if no body
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update recipe");
+  }
+
+  // Expecting { message, recipe }
+  return data.recipe || null;
+}
+
 export async function deleteRecipe(id) {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
